@@ -1,5 +1,5 @@
 FROM gcc:10
 WORKDIR /app/
 COPY ./* ./
-RUN gcc my-program.c -o program
-RUN chmod +x program
+RUN gcc LexicalAnalysis.c -o LexicalAnalysis
+RUN chmod +x LexicalAnalysis
