@@ -5,23 +5,24 @@
 #define BEGIN 1
 #define END 2
 #define FOR 3
-#define DO 4
-#define IF 5
-#define THEN 6
-#define ELSE 7
-#define IDSY 8
-#define INTSY 9
-#define COLONSY 10
-#define PLUSSY 11
-#define STARSY 12
-#define COMSY 13
-#define LPARSY 14
-#define RPARSY 15
-#define ASSIGNSY 16
+#define IF 4
+#define THEN 5
+#define ELSE 6
+#define IDSY 7
+#define INTSY 8
+#define COLONSY 9
+#define PLUSSY 10
+#define STARSY 11
+#define COMSY 12
+#define LPARSY 13
+#define RPARSY 14
+#define ASSIGNSY 15
 char token[150];
 int num,symbol;
 char c;
 FILE *fp;
+char res[15][100]={"Begin","End","For","If","Then","Else","Ident","Int",
+"Colon","Plus","Star","Comma","LParenthesis","RParenthesis","Assign"};
 bool isSpace(){
 	if(c==' ') return true;
 	return false;
@@ -71,7 +72,7 @@ bool isRpar(){
 	return false;
 }
 void error(){
-	printf("词法错误\n");
+	printf("Unknown\n");
 }
 void clearToken(){
 	int l=strlen(token);
@@ -86,7 +87,6 @@ int reserver(){
 	if(strcmp(token,"BEGIN")==0) symbol=BEGIN;
 	if(strcmp(token,"END")==0) symbol=END;
 	if(strcmp(token,"FOR")==0) symbol=FOR;
-	if(strcmp(token,"DO")==0) symbol=DO;
 	if(strcmp(token,"IF")==0) symbol=IF;
 	if(strcmp(token,"THEN")==0) symbol=THEN;
 	if(strcmp(token,"ELSE")==0) symbol=ELSE;
@@ -140,7 +140,9 @@ int main(){
 	fp = fopen("test.txt", "r");
 	while(c!=EOF) {
 		getsym();
-		printf("%d\n",symbol);
+		if(symbol!=7&&symbol!=8)
+			printf("%s\n",res[symbol-1]);
+		else printf("%s(%s)",res[symbol-1],token);
 	}
 	fclose(fp);
 	return 0;
