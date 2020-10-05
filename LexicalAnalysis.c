@@ -73,6 +73,7 @@ bool isRpar(){
 }
 void error(){
 	printf("Unknown\n");
+	exit(0);
 }
 void clearToken(){
 	int l=strlen(token);
@@ -84,7 +85,7 @@ void catToken(){
 	token[strlen(token)]=c;
 }
 int reserver(){
-	if(!strcmp(token,"BEGIN")) return BEGIN;
+	if(strcmp(token,"BEGIN")==0) return BEGIN;
 	else if(strcmp(token,"END")==0) return END;
 	else if(strcmp(token,"FOR")==0) return FOR;
 	else if(strcmp(token,"IF")==0) return IF;
