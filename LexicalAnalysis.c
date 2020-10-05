@@ -133,10 +133,7 @@ int getsym(){
 	else if(isComma()) symbol=COMSY;
 	else if(isLpar()) symbol=LPARSY;
 	else if(isRpar()) symbol=RPARSY;
-	else {
-		if(feof(fd)) return 0;
-		error();
-	}
+	else error();
 	return 0;
 }
 int main(int argc, char *argv[]){
