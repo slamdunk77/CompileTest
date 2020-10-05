@@ -21,8 +21,6 @@ char token[150];
 int num,symbol;
 char c;
 FILE *fp;
-char res[15][100]={"Begin","End","For","If","Then","Else","Ident","Int",
-"Colon","Plus","Star","Comma","LParenthesis","RParenthesis","Assign"};
 bool isSpace(){
 	if(c==' ') return true;
 	return false;
@@ -72,6 +70,7 @@ bool isRpar(){
 	return false;
 }
 void error(){
+	symbol=0;
 	printf("Unknown\n");
 	exit(0);
 }
@@ -85,12 +84,36 @@ void catToken(){
 	token[strlen(token)]=c;
 }
 int reserver(){
-	if(strcmp(token,"BEGIN")==0) return BEGIN;
-	else if(strcmp(token,"END")==0) return END;
-	else if(strcmp(token,"FOR")==0) return FOR;
-	else if(strcmp(token,"IF")==0) return IF;
-	else if(strcmp(token,"THEN")==0) return THEN;
-	else if(strcmp(token,"ELSE")==0) return ELSE;
+	if(strcmp(token,"BEGIN")==0) {
+		symbol=BEGIN;
+		printf("Begin\n");
+		return 1;
+	}
+	else if(strcmp(token,"END")==0) {
+		symbol=END;
+		printf("End\n");
+		return 1;
+	}
+	else if(strcmp(token,"FOR")==0) {
+		symbol=FOR;
+		printf("For\n");
+		return 1;
+	}
+	else if(strcmp(token,"IF")==0) {
+		symbol=IF;
+		printf("If\n");
+		return 1;
+	}
+	else if(strcmp(token,"THEN")==0){
+		symbol=THEN;
+		printf("Then\n");
+		return 1;
+	}
+	else if(strcmp(token,"ELSE")==0) {
+		symbol=ELSE;
+		printf("Else\n");
+		return 1;
+	}
 	else return 0;
 }
 int getsym(){
@@ -109,7 +132,10 @@ int getsym(){
 //			c=fgetc(fp);
 //			printf("c2 %c\n",c);
 		int resultValue=reserver();
-		if(resultValue==0) symbol=IDSY;//标识符 
+		if(resultValue==0) {//标识符
+			symbol=IDSY;
+			printf("Ident(%s)\n",token);
+		} 
 		else symbol=resultValue;
 	}
 	else if(isDigit()){
@@ -120,20 +146,40 @@ int getsym(){
 		fseek(fp,-1,SEEK_CUR);
 		num=atoi(token);
 		symbol=INTSY;
+		printf("Int(%d)\n",num);
 	}
 	else if(isColon()){
 		c=fgetc(fp);
-		if(isEqu()) symbol=ASSIGNSY;
+		if(isEqu()) {
+			symbol=ASSIGNSY;
+			printf("Assign\n");
+		}
 		else{
 			fseek(fp,-1,SEEK_CUR);
 			symbol=COLONSY;
+			printf("Colon\n");
 		}
 	}
-	else if(isPlus()) symbol=PLUSSY;
-	else if(isStar()) symbol=STARSY;
-	else if(isComma()) symbol=COMSY;
-	else if(isLpar()) symbol=LPARSY;
-	else if(isRpar()) symbol=RPARSY;
+	else if(isPlus()) {
+		symbol=PLUSSY;
+		printf("Plus\n");
+	}
+	else if(isStar()) {
+		symbol=STARSY;
+		printf("Star\n");
+	}
+	else if(isComma()) {
+		symbol=COMSY;
+		printf("Comma\n");
+	}
+	else if(isLpar()) {
+		symbol=LPARSY;
+		printf("LParenthesis\n");
+	}
+	else if(isRpar()) {
+		symbol=RPARSY;	
+		printf("RParenthesis\n");
+	}
 	else {
 		if(c==EOF) return 0;
 		error();
@@ -145,11 +191,6 @@ int main(int argc, char *argv[]){
 	while(c!=EOF) {
 		symbol=0;
 		getsym();
-		if(symbol!=7&&symbol!=8)
-			printf("%s\n",res[symbol-1]);
-		else if(symbol==7)
-			printf("%s(%s)\n",res[6],token);
-		else if(symbol==8) printf("%s(%d)\n",res[7],num);
 	}
 	fclose(fp);
 	return 0;
