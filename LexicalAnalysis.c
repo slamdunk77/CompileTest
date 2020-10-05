@@ -137,7 +137,7 @@ int getsym(){
 	return 0;
 }
 int main(int argc, char *argv[]){
-	fp = fopen("test.txt", "r");
+	fp = fopen(argv[1], "r");
 	while(c!=EOF) {
 		getsym();
 		if(symbol!=7&&symbol!=8)
