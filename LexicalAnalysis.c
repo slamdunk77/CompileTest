@@ -28,11 +28,11 @@ bool isSpace(){
 	return false;
 }
 bool isNewline(){
-	if(c=='\n') return true;
+	if(c=='\n' || c=='\r') return true;
 	return false;
 }
 bool isTab(){
-	if(c=='\r') return true;
+	if(c=='\t') return true;
 	return false;
 }
 bool isLetter(){
