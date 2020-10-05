@@ -142,7 +142,9 @@ int main(){
 		getsym();
 		if(symbol!=7&&symbol!=8)
 			printf("%s\n",res[symbol-1]);
-		else printf("%s(%s)",res[symbol-1],token);
+		else if(symbol==7)
+			printf("%s(%s)",res[6],token);
+		else printf("%s(%d)",res[7],num);
 	}
 	fclose(fp);
 	return 0;
