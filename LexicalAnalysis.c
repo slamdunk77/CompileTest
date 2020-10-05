@@ -136,7 +136,7 @@ int getsym(){
 	else error();
 	return 0;
 }
-int main(){
+int main(int argc, char *argv[]){
 	fp = fopen(argv[1], "r");
 	while(c!=EOF) {
 		getsym();
