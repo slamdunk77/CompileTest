@@ -1,151 +1,245 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
+#include <stdio.h>
 #include <stdbool.h>
-#define BEGIN 1
-#define END 2
-#define FOR 3
-#define IF 4
-#define THEN 5
-#define ELSE 6
-#define IDSY 7
-#define INTSY 8
-#define COLONSY 9
-#define PLUSSY 10
-#define STARSY 11
-#define COMSY 12
-#define LPARSY 13
-#define RPARSY 14
-#define ASSIGNSY 15
-char token[150];
-int num,symbol;
-char c;
-FILE *fp;
-char res[15][100]={"Begin","End","For","If","Then","Else","Ident","Int",
-"Colon","Plus","Star","Comma","LParenthesis","RParenthesis","Assign"};
-bool isSpace(){
-	if(c==' ') return true;
-	return false;
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+
+//瀛樻斁褰撳墠璇昏繘鐨勫瓧绗?
+char nowChar;
+
+//瀛樻斁鍗曡瘝鐨勫瓧绗︿覆
+char token[50];
+
+//瀛樻斁褰撳墠璇诲叆鐨勬暣鍨嬫暟鍊?
+int num;
+
+//鏂囦欢鎸囬拡锛岀敤鏉ュ紩鐢ㄥ綋鍓嶈緭鍏ョ殑鏂囦欢
+FILE *fd;
+
+//浠巉d涓鍏ヤ竴涓瓧绗?
+void myGetchar(){
+    nowChar = (char)fgetc(fd);
 }
-bool isNewline(){
-	if(c=='\n' || c=='\r') return true;
-	return false;
-}
-bool isTab(){
-	if(c=='\t') return true;
-	return false;
-}
-bool isLetter(){
-	if((c>='a'&&c<='z')||(c>='A'&&c<='Z')) return true;
-	return false;
-}
-bool isDigit(){
-	if(c>='0'&&c<='9') return true;
-	return false;
-}
-bool isColon(){
-	if(c==':') return true;
-	return false;
-}
-bool isEqu(){
-	if(c=='=') return true;
-	return false;
-}
-bool isPlus(){
-	if(c=='+') return true;
-	return false;
-}
-bool isStar(){
-	if(c=='*') return true;
-	return false;
-}
-bool isComma(){
-	if(c==',') return true;
-	return false;
-}
-bool isLpar(){
-	if(c=='(') return true;
-	return false;
-}
-bool isRpar(){
-	if(c==')') return true;
-	return false;
-}
-void error(){
-	printf("Unknown\n");
-}
+
+//娓呯┖token
 void clearToken(){
-	int l=strlen(token);
-	int i=0;
-	for(i=0;i<l;i++)
-		token[i]=0;
+    for(int i = 0;i < 30;i++){
+        token[i] = 0;
+    }
 }
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓虹┖鏍?
+bool isSpace(){
+    if(nowChar == ' '){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓烘崲琛?
+bool isNewline(){
+    if(nowChar == '\n' || nowChar == '\r'){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓哄埗琛ㄧ
+bool isTab(){
+    if(nowChar == '\t'){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓哄瓧姣?
+bool isLetter(){
+    if(isalpha(nowChar)){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓烘暟瀛?
+bool isDigit(){
+    if(isdigit(nowChar)){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓哄啋鍙?
+bool isColon(){
+    if(nowChar == ':'){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓洪€楀彿
+bool isComma(){
+    if(nowChar == ','){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓虹瓑鍙?
+bool isEqu(){
+    if(nowChar == '='){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓哄姞鍙?
+bool isPlus(){
+    if(nowChar == '+'){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓烘槦鍙?
+bool isStar(){
+    if(nowChar == '*'){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓哄乏鎷彿
+bool isLpar(){
+    if(nowChar == '('){
+        return true;
+    }
+    return false;
+}
+
+//鍒ゆ柇褰撳墠瀛楃鏄惁涓哄彸鎷彿
+bool isRpar(){
+    if(nowChar == ')'){
+        return true;
+    }
+    return false;
+}
+
+//灏嗗綋鍓嶈鍒扮殑瀛楃鎷兼帴鍒皌oken鍚庨潰
 void catToken(){
-	token[strlen(token)]=c;
+    strcat(token, &nowChar);
 }
-int reserver(){
-	if(strcmp(token,"BEGIN")==0) symbol=BEGIN;
-	if(strcmp(token,"END")==0) symbol=END;
-	if(strcmp(token,"FOR")==0) symbol=FOR;
-	if(strcmp(token,"IF")==0) symbol=IF;
-	if(strcmp(token,"THEN")==0) symbol=THEN;
-	if(strcmp(token,"ELSE")==0) symbol=ELSE;
-	return 0;
+
+//fd鍥為€€涓€鏍?
+void retract(){
+    ungetc(nowChar, fd);
 }
-int getsym(){
-	clearToken();
-	do{
-		c=fgetc(fp);
-//			printf("%c\n",c);
-	}while(isSpace() || isNewline() || isTab());
-	if(isLetter()){
-		while(isLetter() || isDigit()){
-			catToken();
-			c=fgetc(fp);
-//				printf("c1 %c\n",c);
-		} 
-		fseek(fp,-1,SEEK_CUR);
-//			c=fgetc(fp);
-//			printf("c2 %c\n",c);
-		int resultValue=reserver();
-		if(resultValue==0) symbol=IDSY;//标识符 
-		else symbol=resultValue;
-	}
-	else if(isDigit()){
-		while(isDigit()){
-			catToken();
-			c=fgetc(fp);
-		}
-		fseek(fp,-1,SEEK_CUR);
-		num=atoi(token);
-		symbol=INTSY;
-	}
-	else if(isColon()){
-		c=fgetc(fp);
-		if(isEqu()) symbol=ASSIGNSY;
-		else{
-			fseek(fp,-1,SEEK_CUR);
-			symbol=COLONSY;
-		}
-	}
-	else if(isPlus()) symbol=PLUSSY;
-	else if(isStar()) symbol=STARSY;
-	else if(isComma()) symbol=COMSY;
-	else if(isLpar()) symbol=LPARSY;
-	else if(isRpar()) symbol=RPARSY;
-	else error();
-	return 0;
+
+//鍒ゆ柇鏄惁鏄繚鐣欏瓧
+bool reserver(){
+    if(strcmp(token, "BEGIN") == 0){
+        printf("Begin\n");
+        return true;
+    }
+    else if(strcmp(token, "END") == 0){
+        printf("End\n");
+        return true;
+    }
+    else if(strcmp(token, "FOR") == 0){
+        printf("For\n");
+        return true;
+    }
+    else if(strcmp(token, "IF") == 0){
+        printf("If\n");
+        return true;
+    }
+    else if(strcmp(token, "THEN") == 0){
+        printf("Then\n");
+        return true;
+    }
+    else if(strcmp(token, "ELSE") == 0){
+        printf("Else\n");
+        return true;
+    }
+    else{
+        return false;
+    }
 }
-int main(int argc, char *argv[]){
-	fp = fopen(argv[1], "r");
-	while(c!=EOF) {
-		getsym();
-		if(symbol!=7&&symbol!=8)
-			printf("%s\n",res[symbol-1]);
-		else if(symbol==7)
-			printf("%s(%s)",res[6],token);
-		else printf("%s(%d)",res[7],num);
-	}
-	fclose(fp);
-	return 0;
+
+//灏唗oken涓殑瀛楃涓茶浆鍖栨垚鍗佽繘鍒舵暟瀛楀苟瀛樺埌num涓?
+void transNum(){
+    char *stop;
+    num = strtol(token, &stop, 10);
+}
+
+//閿欒澶勭悊
+void error(){
+    printf("Unknown");
+    exit(0);
+}
+
+//涓诲垎鏋愬嚱鏁?
+void getsym(){
+    clearToken();
+    myGetchar();
+    while(isSpace() || isNewline() || isTab()){
+        myGetchar();
+    }
+    if(isLetter()){
+        while(isLetter() || isDigit()){
+            catToken();
+            myGetchar();
+        }
+        retract();
+        if(!reserver()){
+            printf("Ident(%s)\n", token);
+        }
+    }
+    else if(isDigit()){
+        while(isDigit()){
+            catToken();
+            myGetchar();
+        }
+        retract();
+        transNum();
+        printf("Int(%d)\n", num);
+    }
+    else if(isColon()){
+        myGetchar();
+        if(isEqu()){
+            printf("Assign\n");
+        }
+        else{
+            retract();
+            printf("Colon\n");
+        }
+    }
+    else if(isPlus()){
+        printf("Plus\n");
+    }
+    else if(isStar()){
+        printf("Star\n");
+    }
+    else if(isComma()){
+        printf("Comma\n");
+    }
+    else if(isLpar()){
+        printf("LParenthesis\n");
+    }
+    else if(isRpar()){
+        printf("RParenthesis\n");
+    }
+    else{
+        if(feof(fd)){
+            return;
+        }
+        error();
+    }
+}
+int main(int argc, char *argv[]) {
+    fd = fopen(argv[1], "r");
+    while(!feof(fd)){
+        getsym();
+    }
+    fclose(fd);
+    return 0;
 }
