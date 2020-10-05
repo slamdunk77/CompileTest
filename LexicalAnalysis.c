@@ -143,12 +143,13 @@ int getsym(){
 int main(int argc, char *argv[]){
 	fp = fopen(argv[1], "r");
 	while(c!=EOF) {
+		symbol=0;
 		getsym();
 		if(symbol!=7&&symbol!=8)
 			printf("%s\n",res[symbol-1]);
 		else if(symbol==7)
 			printf("%s(%s)\n",res[6],token);
-		else printf("%s(%d)\n",res[7],num);
+		else if(symbol==8) printf("%s(%d)\n",res[7],num);
 	}
 	fclose(fp);
 	return 0;
